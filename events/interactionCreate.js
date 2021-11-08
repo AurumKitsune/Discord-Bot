@@ -4,15 +4,25 @@ module.exports = {
 		if (!interaction.isCommand()) return;
 		console.log(`${interaction.user.tag} in #${interaction.channel.name} triggered an interaction.`);
 
-		const command = interaction.client.commands.get(interaction.commandName);
+		const globalCommand = interaction.client.globalCommands.get(interaction.commandName);
+		const guildCommand = interaction.client.guildCommands.get(interaction.commandName);
 
-		if (!command) return;
+		if (globalCommand) {
+			try {
+				globalCommand.execute(interaction);
+			} catch (error) {
+				console.error(error);
+				interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+			}
+		}
 
-		try {
-			command.execute(interaction);
-		} catch (error) {
-			console.error(error);
-			interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+		if (guildCommand) {
+			try {
+				guildCommand.execute(interaction);
+			} catch (error) {
+				console.error(error);
+				interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+			}
 		}
 	}
 }
