@@ -7,14 +7,15 @@ module.exports = {
 		.setName('meme')
 		.setDescription('Replies with a random meme'),
 	async execute(interaction) {
-		fs.readFile('res/mikuMemes.txt', 'utf8', function(err, data) {
-			if (err) throw err;
-			data = data.split('\n');
-			const memeEmbed = new MessageEmbed()
-				.setColor('#86CECB')
-				.setImage(data[Math.floor(Math.random() * data.length)]);
+		// fs.readFile('res/mikuMemes.txt', 'utf8', function(err, data) {
+		// 	if (err) throw err;
+		// 	data = data.split('\n');
+		// 	const memeEmbed = new MessageEmbed()
+		// 		.setColor('#86CECB')
+		// 		.setImage(data[Math.floor(Math.random() * data.length)]);
 
-			interaction.reply({embeds: [memeEmbed]});
-		});
+		// 	interaction.reply({embeds: [memeEmbed]});
+		// });
+		await interaction.reply({content: 'Disabled for now', ephemeral: true});
 	}
 };
