@@ -15,7 +15,7 @@ const token = process.env['token'];
 
 // Declare bot Intents
 const myIntents = new Intents();
-myIntents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES);
+myIntents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS);
 
 // Create a new client instance
 const client = new Client({ intents: myIntents });
