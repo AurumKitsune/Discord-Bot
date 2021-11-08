@@ -1,11 +1,12 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { MessageEmbed } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('gacha')
 		.setDescription('Spend $10 for a gacha pull'),
 	async execute(interaction) {
-		let emote = "";
+		let emote = 'error';
 		const rng = Math.floor(Math.random() * 1017);
 		
 		let rareMiku = false;
@@ -14,30 +15,36 @@ module.exports = {
 		}
 
 		if (rng == 0) {
-			emote = "<:MikuConcert:817119062668345355>";
+			emote = 'Rare5';
 		}
 		else if (1 <= rng && rng <= 3) {
-			emote = "<:MikuAngel:817119060835434546>";
+			emote = 'Rare4';
 		}
 		else if (4 <= rng && rng <= 6) {
-			emote = "<:MikuLeek:817119062508175360>";
+			emote = 'Rare3';
 		}
 		else if (7 <= rng && rng <= 11) {
-			emote = "<:MikuPeak:817119060479311872>";
+			emote = 'Rare2';
 		}
 		else if (12 <= rng && rng <= 16) {
-			emote = "<:MikuSinging:817119062457843732>";
+			emote = 'Rare1';
 		}
 		else if (17 <= rng && rng <= 266) {
-			emote = "<:Miku1:817119056879681536>";
+			emote = 'Common1';
 		}
 		else if (267 <= rng && rng <= 516) {
-			emote = "<:Miku2:817119057488379925>";
+			emote = 'Common2';
 		}
 		else if (517 <= rng && rng <= 1016) {
-			emote = "<:MikuSad:817119062215360512>";
+			emote = 'Bad';
 		}
 
-		await interaction.reply('You pulled: ' + emote + '! You paid ~~\u2133~~ 10 for casting.');
+		const gachaEmbed = new MessageEmbed()
+			.setColor('#86CECB')
+			.setTitle('You pulled')
+			.setImage('attachment://' + emote + '.png')
+			.setFooter('You paid $10 for pulling.');
+
+		await interaction.reply({embeds: [gachaEmbed], files: ['./res/gacha-images/' + emote + '.png']});
 	}
 };
