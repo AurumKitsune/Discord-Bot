@@ -10,8 +10,7 @@ module.exports = {
 				.setRequired(true)
 		),
 	async execute(interaction) {
-		await interaction.reply('\u200b');
-		await interaction.deleteReply();
+		await interaction.reply({content: 'Sent', ephemeral: true});
 		await interaction.channel.send(interaction.options.getString('message'));
 	}
 };
