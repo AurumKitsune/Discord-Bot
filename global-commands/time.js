@@ -7,7 +7,8 @@ module.exports = {
 		.addIntegerOption(option =>
 			option.setName('time')
 				.setDescription('Enter time in seconds')
-				.setRequired(true)),
+				.setRequired(true)
+		),
 	async execute(interaction) {
 		const time = interaction.options.getInteger('time');
 		await interaction.reply(`<t:${Math.floor((Date.now() / 1000) + time)}:R>`);
