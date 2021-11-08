@@ -1,12 +1,12 @@
-// Require the necessary discord.js classes
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
 const { token } = require('./config.json');
 
-// Create a new client instance
+// Declare bot Intents
 const myIntents = new Intents();
 myIntents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES);
 
+// Create a new client instance
 const client = new Client({ intents: myIntents });
 
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
@@ -39,5 +39,4 @@ guildCommandFiles.forEach(file => {
 	client.guildCommands.set(command.data.name, command);
 });
 
-// Login to Discord with your client's token
 client.login(token);
