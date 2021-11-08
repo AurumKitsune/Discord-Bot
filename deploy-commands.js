@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { clientId, guildId, token } = require('./config.json');
+const { clientId, guildIds, token } = require('./config.json');
 
 const globalCommands = [];
 const globalCommandFiles = fs.readdirSync('./global-commands').filter(file => file.endsWith('.js'));
@@ -30,10 +30,12 @@ const rest = new REST({ version: '9' }).setToken(token);
 			{ body: globalCommands }
 		);
 
-		await rest.put(
-			Routes.applicationGuildCommands(clientId, guildId),
-			{ body: guildCommands }
-		);
+		for (let server in guildIds) {
+			rest.put(
+				Routes.applicationGuildCommands(clientId, guildIds[server]),
+				{ body: guildCommands }
+			);
+		};
 
 		console.log('Successfully reloaded slash commands.');
 	} catch (error) {
