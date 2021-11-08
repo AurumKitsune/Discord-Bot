@@ -17,15 +17,24 @@ for (const file of eventFiles) {
 	}
 }
 
-client.commands = new Collection();
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+client.globalCommands = new Collection();
+client.guildCommands = new Collection();
+const globalCommandFiles = fs.readdirSync('./global-commands').filter(file => file.endsWith('.js'));
+const guildCommandFiles = fs.readdirSync('./guild-commands').filter(file => file.endsWith('.js'));
 
-for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
+globalCommandFiles.forEach(file => {
+	const command = require(`./global-commands/${file}`);
 	// Set a new item in the Collection
 	// With the key as the command name and the value as the exported module
-	client.commands.set(command.data.name, command);
-}
+	client.globalCommands.set(command.data.name, command);
+});
+
+guildCommandFiles.forEach(file => {
+	const command = require(`./guild-commands/${file}`);
+	// Set a new item in the Collection
+	// With the key as the command name and the value as the exported module
+	client.guildCommands.set(command.data.name, command);
+});
 
 // Login to Discord with your client's token
 client.login(token);
