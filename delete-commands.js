@@ -9,6 +9,11 @@ const rest = new REST({ version: '9' }).setToken(token);
 		console.log('Started deleting application (/) commands.');
 
 		await rest.put(
+			Routes.applicationCommands(clientId),
+			{ body: [] }
+		);
+
+		await rest.put(
 			Routes.applicationGuildCommands(clientId, guildId),
 			{ body: [] }
 		);
