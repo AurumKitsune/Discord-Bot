@@ -1,6 +1,8 @@
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { guildIds, clientId, token } = require('./config.json');
+const { guildIds } = require('./config.json');
+const token = process.env['token'];
+const clientId = process.env['clientId'];
 
 const rest = new REST({ version: '9' }).setToken(token);
 
