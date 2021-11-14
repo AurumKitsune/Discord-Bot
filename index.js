@@ -9,6 +9,7 @@
 
 
 // Bot code
+require('dotenv').config();
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
 const token = process.env['token'];
