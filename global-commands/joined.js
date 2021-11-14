@@ -6,8 +6,12 @@ module.exports = {
 		.setName('joined')
 		.setDescription('Replies with user info'),
 	async execute(interaction) {
+		await interaction.deferReply();
+
 		let memberList = await interaction.guild.members.fetch();
-		memberList.sort((curr, prev) => curr.joinedTimestamp > prev.joinedTimestamp ? 1 : -1);
+		memberList = memberList
+			.filter(member => member.user.bot == false)
+			.sort((curr, prev) => curr.joinedTimestamp > prev.joinedTimestamp ? 1 : -1);
 
 		let str = '';
 		for (let i = 0; i < memberList.size && i < 10; i++) {
@@ -20,6 +24,6 @@ module.exports = {
 			.addFields(
 				{name: '\u200B', value: str, inline: true}
 			);
-		await interaction.reply({embeds: [joinedEmbed]});
+		await interaction.editReply({embeds: [joinedEmbed]});
 	}
 };
