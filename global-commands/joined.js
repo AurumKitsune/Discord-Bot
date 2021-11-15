@@ -35,7 +35,7 @@ module.exports = {
 		}
 
 		let str = '';
-		for (let i = (pageNum - 1) * 10; i < memberList.size && i < 10; i++) {
+		for (let i = (pageNum - 1) * 10; i < memberList.size && i < (pageNum - 1) * 10 + 10; i++) {
 			str += `${i+1}: ${memberList.at(i).displayName} - <t:${Math.floor(memberList.at(i).joinedTimestamp / 1000)}:D> \n`;
 		}
 		
