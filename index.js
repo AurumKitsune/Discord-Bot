@@ -14,6 +14,10 @@ const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
 const token = process.env['token'];
 
+const Database = require("@replit/database");
+const db = new Database();
+console.log(process.env['REPLIT_DB_URL']);
+
 // Declare bot Intents
 const myIntents = new Intents();
 myIntents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS);
