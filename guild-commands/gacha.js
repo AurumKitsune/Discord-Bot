@@ -1,41 +1,58 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
+const Database = require("@replit/database");
+const db = new Database();
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('gacha')
 		.setDescription('Spend $10 for a gacha pull'),
 	async execute(interaction) {
+		interaction.deferReply();
+		let userData = {};
+		if (await db.get(interaction.user.id)) {
+			userData = await db.get(interaction.user.id);
+		}
+
+		if (!userData.lmd || userData.lmd < 10) {
+			await interaction.editReply('Not enough LMD');
+			return;
+		}
+
+		userData.lmd -= 10;
+
+		await db.set(interaction.user.id, userData);
+
 		let emote = 'error';
-		const rng = Math.floor(Math.random() * 1017);
+		const rng = Math.floor(Math.random() * 1000);
 		
 		let rareMiku = false;
-		if (0 <= rng && rng <= 16) {
+		if (0 <= rng && rng < 5) {
 			rareMiku = true;
 		}
 
 		if (rng == 0) {
 			emote = 'Rare5';
 		}
-		else if (1 <= rng && rng <= 3) {
+		else if (rng == 1 ) {
 			emote = 'Rare4';
 		}
-		else if (4 <= rng && rng <= 6) {
+		else if (rng == 2) {
 			emote = 'Rare3';
 		}
-		else if (7 <= rng && rng <= 11) {
+		else if (rng == 3) {
 			emote = 'Rare2';
 		}
-		else if (12 <= rng && rng <= 16) {
+		else if (rng == 4) {
 			emote = 'Rare1';
 		}
-		else if (17 <= rng && rng <= 266) {
+		else if (5 <= rng && rng < 50) {
 			emote = 'Common1';
 		}
-		else if (267 <= rng && rng <= 516) {
+		else if (50 <= rng && rng < 600) {
 			emote = 'Common2';
 		}
-		else if (517 <= rng && rng <= 1016) {
+		else if (600 <= rng && rng < 1000) {
 			emote = 'Bad';
 		}
 
@@ -43,8 +60,8 @@ module.exports = {
 			.setColor('#86CECB')
 			.setTitle('You pulled')
 			.setImage('attachment://' + emote + '.png')
-			.setFooter('You paid $10 for pulling.');
+			.setFooter('You paid \u20A410 for pulling.');
 
-		await interaction.reply({embeds: [gachaEmbed], files: ['./res/gacha-images/' + emote + '.png']});
+		await interaction.editReply({embeds: [gachaEmbed], files: ['./res/gacha-images/' + emote + '.png']});
 	}
 };
