@@ -20,7 +20,7 @@ console.log(process.env['REPLIT_DB_URL']);
 
 // Declare bot Intents
 const myIntents = new Intents();
-myIntents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS);
+myIntents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS);
 
 // Create a new client instance
 const client = new Client({ intents: myIntents });
