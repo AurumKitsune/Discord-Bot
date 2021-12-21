@@ -19,6 +19,9 @@ module.exports = {
 		if (!userData.lmd) {
 			userData.lmd = 0;
 		}
+		if (!userData.karma) {
+			userData.karma = 0;
+		}
 
 		const profileEmbed = new MessageEmbed()
 			.setColor('#86CECB')
@@ -30,7 +33,8 @@ module.exports = {
 				{name: 'Account Created', value: `<t:${Math.floor(interaction.user.createdTimestamp / 1000)}:D>`, inline: true},
 				{name: 'LMD', value: `\u20A4${userData.lmd}`, inline: true},
 				{name: '\u200B', value: '\u200B', inline: true},
-				{name: 'Miku Time Count', value: `${userData.mikuTime}`, inline: true}
+				{name: 'Miku Time Count', value: `${userData.mikuTime}`, inline: true},
+				{name: 'Karma', value: `${userData.karma}`, inline: true}
 			);
 		await interaction.reply({embeds: [profileEmbed]});
 	}
