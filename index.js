@@ -23,7 +23,7 @@ const myIntents = new Intents();
 myIntents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS);
 
 // Create a new client instance
-const client = new Client({ intents: myIntents });
+const client = new Client({intents: myIntents, partials: ['MESSAGE', 'REACTION']});
 
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
 
