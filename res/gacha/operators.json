@@ -1,0 +1,66 @@
+{
+	"Limited": {
+		"size": 5,
+		"ops": [
+			"ash",
+			"dusk",
+			"rosmontis",
+			"skalter",
+			"w"
+		]
+	},
+	"6*": {
+		"size": 11,
+		"ops": [
+			"archetto",
+			"bagpipe",
+			"blaze",
+			"eyja",
+			"kaltsit",
+			"mudrock",
+			"saga",
+			"saria",
+			"surtr",
+			"suzu",
+			"weedy"
+		]
+	},
+	"5*": {
+		"size": 9,
+		"ops": [
+			"amiya",
+			"blue poison",
+			"lappland",
+			"platinum",
+			"pramanix",
+			"ptilopsis",
+			"specter",
+			"texas",
+			"warfarin"
+		]
+	},
+	"4*": {
+		"size": 9,
+		"ops": [
+			"beanstalk",
+			"gravel",
+			"gummy",
+			"jessica",
+			"myrtle",
+			"perfumer",
+			"pinecone",
+			"sussuro",
+			"vigna"
+		]
+	},
+	"3*": {
+		"size": 5,
+		"ops": [
+			"ansel",
+			"fang",
+			"kroos",
+			"melantha",
+			"popukar"
+		]
+	}
+}
