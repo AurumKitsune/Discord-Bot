@@ -2,65 +2,65 @@
 	"Limited": {
 		"size": 5,
 		"ops": [
-			"ash",
-			"dusk",
-			"rosmontis",
-			"skalter",
-			"w"
+			{"name": "ash", "emote": "924584762151161856"},
+			{"name": "dusk", "emote": "924584762654466088"},
+			{"name": "rosmontis", "emote": "924594730375999538"},
+			{"name": "skalter", "emote": "924584762830639114"},
+			{"name": "w", "emote": "924584761865961473"}
 		]
 	},
 	"6*": {
 		"size": 11,
 		"ops": [
-			"archetto",
-			"bagpipe",
-			"blaze",
-			"eyja",
-			"kaltsit",
-			"mudrock",
-			"saga",
-			"saria",
-			"surtr",
-			"suzu",
-			"weedy"
+			{"name": "archetto", "emote": "924584696044716062"},
+			{"name": "bagpipe", "emote": "924584696145379348"},
+			{"name": "blaze", "emote": "924584696397053962"},
+			{"name": "eyja", "emote": "924584696438984744"},
+			{"name": "kaltsit", "emote": "924584695776309248"},
+			{"name": "mudrock", "emote": "924584695969239070"},
+			{"name": "saga", "emote": "924584695042306109"},
+			{"name": "saria", "emote": "924584696279613501"},
+			{"name": "surtr", "emote": "924584696095080479"},
+			{"name": "suzu", "emote": "924584696342515743"},
+			{"name": "weedy", "emote": "924584696522874951"}
 		]
 	},
 	"5*": {
 		"size": 9,
 		"ops": [
-			"amiya",
-			"blue poison",
-			"lappland",
-			"platinum",
-			"pramanix",
-			"ptilopsis",
-			"specter",
-			"texas",
-			"warfarin"
+			{"name": "amiya", "emote": "924584588381151302"},
+			{"name": "blue poison", "emote": "924584589064806400"},
+			{"name": "lappland", "emote": "924584589593309205"},
+			{"name": "platinum", "emote": "924584590516056066"},
+			{"name": "pramanix", "emote": "924584590310514728"},
+			{"name": "ptilopsis", "emote": "924584590641877022"},
+			{"name": "specter", "emote": "924584590201487370"},
+			{"name": "texas", "emote": "924584589601689640"},
+			{"name": "warfarin", "emote": "924584590654472222"}
 		]
 	},
 	"4*": {
 		"size": 9,
 		"ops": [
-			"beanstalk",
-			"gravel",
-			"gummy",
-			"jessica",
-			"myrtle",
-			"perfumer",
-			"pinecone",
-			"sussuro",
-			"vigna"
+			{"name": "beanstalk", "emote": "924584516163600454"},
+			{"name": "gravel", "emote": "924584516155232286"},
+			{"name": "gummy", "emote": "924584515794522152"},
+			{"name": "jessica", "emote": "924584515765141534"},
+			{"name": "myrtle", "emote": "924584516859867166"},
+			{"name": "perfumer", "emote": "924584516486586449"},
+			{"name": "pinecone", "emote": "924584516591443968"},
+			{"name": "sussuro", "emote": "924584516381708348"},
+			{"name": "vigna", "emote": "924584516515934228"}
 		]
 	},
 	"3*": {
 		"size": 5,
 		"ops": [
-			"ansel",
-			"fang",
-			"kroos",
-			"melantha",
-			"popukar"
+			{"name": "ansel", "emote": "924584403840167957"},
+			{"name": "fang", "emote": "924584404280561694"},
+			{"name": "kroos", "emote": "924584404083437639"},
+			{"name": "melantha", "emote": "924584404377034762"},
+			{"name": "popukar", "emote": "924584404460896316"}
 		]
 	}
 }
