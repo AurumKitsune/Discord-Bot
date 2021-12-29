@@ -6,11 +6,24 @@ const db = new Database();
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('profile')
-		.setDescription('Replies with user profile'),
+		.setDescription('Replies with user profile')
+		.addUserOption(option =>
+			option.setName('user')
+				.setDescription('user profile to check')
+		),
 	async execute(interaction) {
+		let user = interaction.options.getUser('user');
+		if (!user) {
+			user = interaction.user;
+		}
+		if (user.bot) {
+			await interaction.reply({content: 'User is a bot', ephemeral: true});
+			return;
+		}
+		
 		let userData = {};
-		if (await db.get(interaction.user.id)) {
-			userData = await db.get(interaction.user.id);
+		if (await db.get(user.id)) {
+			userData = await db.get(user.id);
 		}
 
 		if (!userData.mikuTime) {
@@ -25,12 +38,9 @@ module.exports = {
 
 		const profileEmbed = new MessageEmbed()
 			.setColor('#86CECB')
-			.setAuthor(`${interaction.user.tag}`, `${interaction.user.avatarURL()}`)
-			.setThumbnail(`${interaction.user.avatarURL()}`)
+			.setTitle(`${user.username}'s Profile`)
+			.setThumbnail(`${user.avatarURL()}`)
 			.addFields(
-				{name: 'ID', value: `${interaction.user.id}`, inline: true},
-				{name: '\u200B', value: '\u200B', inline: true},
-				{name: 'Account Created', value: `<t:${Math.floor(interaction.user.createdTimestamp / 1000)}:D>`, inline: true},
 				{name: 'LMD', value: `\u20A4${userData.lmd}`, inline: true},
 				{name: '\u200B', value: '\u200B', inline: true},
 				{name: 'Miku Time Count', value: `${userData.mikuTime}`, inline: true},
