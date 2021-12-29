@@ -106,8 +106,8 @@ function gachaPull(interaction, userData) {
 
 	const gachaEmbed = new MessageEmbed()
 		.setColor('#86CECB')
-		.setTitle(`You pulled a ${rarity}`)
-		.setImage('attachment://' + op + '.png')
+		.setTitle(`You pulled ${op} (${rarity})`)
+		.setImage(`attachment://${op}.png`)
 		.setFooter('You paid \u20A45 for pulling.');
 
 	return {embeds: [gachaEmbed], files: [`./res/gacha/${rarity}/${op}.png`]};
@@ -143,6 +143,10 @@ function gachaSell(interaction, userData) {
 }
 
 function gachaInventory(interaction, userData) {
+	// if (!userData.favoriteOp) {
+	// 	userData.favoriteOp = {name: '', rarity: ''};
+	// }
+
 	const uniqueThreeStars = getUniqueOperators(userData, '3*');
 	const uniqueFourStars = getUniqueOperators(userData, '4*');
 	const uniqueFiveStars = getUniqueOperators(userData, '5*');
@@ -152,6 +156,8 @@ function gachaInventory(interaction, userData) {
 	const inventoryEmbed = new MessageEmbed()
 		.setColor('#86CECB')
 		.setAuthor(`${interaction.user.tag}'s Inventory`)
+		// .setDescription(`Favorite Operator: ${userData.favoriteOp.name}`)
+		// .setThumbnail(`attachment://${userData.favoriteOp.name}.png`)
 		.addFields(
 			{
 				name: `3* Count: ${userData.inventory['3* Count']}\nUnique operators: ${uniqueThreeStars.count}/${operators['3*'].size}`,
@@ -175,6 +181,7 @@ function gachaInventory(interaction, userData) {
 			}
 		);
 
+	//return {embeds: [inventoryEmbed], files: [`./res/gacha/${userData.favoriteOp.rarity}/${userData.favoriteOp.name}.png`]};
 	return {embeds: [inventoryEmbed]};
 }
 
