@@ -57,7 +57,7 @@ module.exports = {
 		let response = 'error';
 
 		if (interaction.options.getSubcommand() === 'pull') {
-			response = gachaPull(interaction, userData);
+			response = gachaPull(userData);
 			await db.set(interaction.user.id, userData);
 		}
 		else if (interaction.options.getSubcommand() === 'sell') {
@@ -72,7 +72,7 @@ module.exports = {
 	}
 };
 
-function gachaPull(interaction, userData) {
+function gachaPull(userData) {
 	if (!userData.lmd || userData.lmd < 5) {
 		return 'Not enough LMD';
 	}
@@ -107,7 +107,7 @@ function gachaPull(interaction, userData) {
 	const gachaEmbed = new MessageEmbed()
 		.setColor('#86CECB')
 		.setTitle(`You pulled ${op} (${rarity})`)
-		.setImage(`attachment://${op}.png`)
+		.setImage(`attachment://${op.replace(/\s/g, '_')}.png`)
 		.setFooter('You paid \u20A45 for pulling.');
 
 	return {embeds: [gachaEmbed], files: [`./res/gacha/${rarity}/${op}.png`]};
@@ -155,7 +155,7 @@ function gachaInventory(interaction, userData) {
 
 	const inventoryEmbed = new MessageEmbed()
 		.setColor('#86CECB')
-		.setAuthor(`${interaction.user.tag}'s Inventory`)
+		.setAuthor(`${interaction.user.username}'s Inventory`)
 		// .setDescription(`Favorite Operator: ${userData.favoriteOp.name}`)
 		// .setThumbnail(`attachment://${userData.favoriteOp.name}.png`)
 		.addFields(
@@ -191,7 +191,7 @@ function getUniqueOperators(userData, rarity) {
 
 	for (let i = operators[rarity].size - 1; i >= 0; i--) {
 		if (userData.inventory[`${rarity} Owned`] >= 2**i) {
-			emoteStr += `<:${operators[rarity].ops[i].name}:${operators[rarity].ops[i].emote}>`;
+			emoteStr += `<:${operators[rarity].ops[i].name.replace(/\s/g, '_')}:${operators[rarity].ops[i].emote}>`;
 			count++;
 			userData.inventory[`${rarity} Owned`] -= 2**i;
 		}
