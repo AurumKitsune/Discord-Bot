@@ -73,7 +73,9 @@ module.exports = {
 };
 
 function gachaPull(userData) {
-	if (!userData.lmd || userData.lmd < 5) {
+	const pullCost = 10;
+
+	if (!userData.lmd || userData.lmd < pullCost) {
 		return 'Not enough LMD';
 	}
 
@@ -101,14 +103,14 @@ function gachaPull(userData) {
 	op = operators[rarity].ops[opNum].name;
 	userData.inventory[`${rarity} Owned`] = userData.inventory[`${rarity} Owned`] | 2 ** opNum;
 
-	userData.lmd -= 5;
+	userData.lmd -= pullCost;
 	userData.inventory[`${rarity} Count`]++;
 
 	const gachaEmbed = new MessageEmbed()
 		.setColor('#86CECB')
 		.setTitle(`You pulled ${op} (${rarity})`)
 		.setImage(`attachment://${op.replace(/\s/g, '_')}.png`)
-		.setFooter('You paid \u20A45 for pulling.');
+		.setFooter(`You paid \u20A4${pullCost} for pulling.`);
 
 	return {embeds: [gachaEmbed], files: [`./res/gacha/${rarity}/${op}.png`]};
 }
@@ -127,13 +129,13 @@ function gachaSell(interaction, userData) {
 		sellPrice = 3;
 	}
 	else if (rarity === '5*') {
-		sellPrice = 50;
+		sellPrice = 40;
 	}
 	else if (rarity === '6*') {
-		sellPrice = 600;
+		sellPrice = 450;
 	}
 	else if (rarity === 'Limited') {
-		sellPrice = 80000;
+		sellPrice = 50000;
 	}
 
 	userData.lmd += amount * sellPrice;
