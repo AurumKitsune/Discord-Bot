@@ -21,8 +21,8 @@ module.exports = {
 			userData.lastDaily = 0;
 		}
 
-		if (Math.floor(Date.now() / 1000) - userData.lastDaily < 86400) {
-			await interaction.editReply(`You can use again <t:${userData.lastDaily + 86400}:R>`);
+		if (Math.floor(Date.now() / 1000) - userData.lastDaily < 72000) {
+			await interaction.editReply(`You can use again <t:${userData.lastDaily + 72000}:R>`);
 		}
 		else {
 			userData.lmd += 50;
