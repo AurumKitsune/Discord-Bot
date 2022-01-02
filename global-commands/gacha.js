@@ -3,6 +3,7 @@ const { MessageEmbed } = require('discord.js');
 const Database = require("@replit/database");
 const db = new Database();
 const operators = require('../res/gacha/operators.json');
+const e = require('express');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -31,6 +32,15 @@ module.exports = {
 		.addSubcommand(subcommand =>
 			subcommand.setName('inventory')
 				.setDescription('View how many of each rarity you have and which operators you have pulled')
+		)
+		.addSubcommand(subcommand =>
+			subcommand.setName('favorite')
+				.setDescription('Set your favorite operator')
+				.addStringOption(option =>
+					option.setName('operator')
+						.setDescription('name of operator you want to favorite')
+						.setRequired(true)
+				)
 		),
 	async execute(interaction) {
 		await interaction.deferReply();
@@ -66,6 +76,10 @@ module.exports = {
 		}
 		else if (interaction.options.getSubcommand() === 'inventory') {
 			response = gachaInventory(interaction, userData);
+		}
+		else if (interaction.options.getSubcommand() === 'favorite') {
+			response = gachaFavorite(interaction, userData);
+			await db.set(interaction.user.id, userData);
 		}
 
 		await interaction.editReply(response);
@@ -145,9 +159,11 @@ function gachaSell(interaction, userData) {
 }
 
 function gachaInventory(interaction, userData) {
-	// if (!userData.favoriteOp) {
-	// 	userData.favoriteOp = {name: '', rarity: ''};
-	// }
+	if (!userData.favoriteOp) {
+		userData.favoriteOp = {name: '', rarity: ''};
+	}
+
+	console.log(userData.favoriteOp.name);
 
 	const uniqueThreeStars = getUniqueOperators(userData, '3*');
 	const uniqueFourStars = getUniqueOperators(userData, '4*');
@@ -157,9 +173,7 @@ function gachaInventory(interaction, userData) {
 
 	const inventoryEmbed = new MessageEmbed()
 		.setColor('#86CECB')
-		.setAuthor(`${interaction.user.username}'s Inventory`)
-		// .setDescription(`Favorite Operator: ${userData.favoriteOp.name}`)
-		// .setThumbnail(`attachment://${userData.favoriteOp.name}.png`)
+		.setTitle(`${interaction.user.username}'s Inventory`)
 		.addFields(
 			{
 				name: `3* Count: ${userData.inventory['3* Count']}\nUnique operators: ${uniqueThreeStars.count}/${operators['3*'].size}`,
@@ -183,8 +197,55 @@ function gachaInventory(interaction, userData) {
 			}
 		);
 
-	//return {embeds: [inventoryEmbed], files: [`./res/gacha/${userData.favoriteOp.rarity}/${userData.favoriteOp.name}.png`]};
-	return {embeds: [inventoryEmbed]};
+	if (userData.favoriteOp.name !== '') {
+		inventoryEmbed.setDescription(`Favorite Operator: ${userData.favoriteOp.name}`)
+			.setThumbnail(`attachment://${userData.favoriteOp.name}.png`);
+		
+		return {embeds: [inventoryEmbed], files: [`./res/gacha/${userData.favoriteOp.rarity}/${userData.favoriteOp.name}.png`]};
+	}
+	else {
+		return {embeds: [inventoryEmbed]};
+	}
+}
+
+function gachaFavorite(interaction, userData) {
+	let operator = interaction.options.getString('operator');
+
+	// Captialize first letter of each word
+	operator.toLowerCase();
+	operator = capitalize(operator);
+	operator.split(' ').map(capitalize).join(' ');
+
+	console.log(operator);
+
+	if (hasOperator(operator, '3*', userData.inventory['3* Owned'])) {
+		userData.favoriteOp = {name: operator, rarity: '3*'};
+	
+		return `${operator} is now your favorite operator.`;
+	}
+	else if (hasOperator(operator, '4*', userData.inventory['4* Owned'])) {
+		userData.favoriteOp = {name: operator, rarity: '4*'};
+	
+		return `${operator} is now your favorite operator.`;
+	}
+	else if (hasOperator(operator, '5*', userData.inventory['5* Owned'])) {
+		userData.favoriteOp = {name: operator, rarity: '5*'};
+	
+		return `${operator} is now your favorite operator.`;
+	}
+	else if (hasOperator(operator, '6*', userData.inventory['6* Owned'])) {
+		userData.favoriteOp = {name: operator, rarity: '6*'};
+	
+		return `${operator} is now your favorite operator.`;
+	}
+	else if (hasOperator(operator, 'Limited', userData.inventory['Limited Owned'])) {
+		userData.favoriteOp = {name: operator, rarity: 'Limited'};
+	
+		return `${operator} is now your favorite operator.`;
+	}
+	
+	
+	return 'Operator not found or not owned';
 }
 
 function getUniqueOperators(userData, rarity) {
@@ -200,4 +261,18 @@ function getUniqueOperators(userData, rarity) {
 	}
 
 	return {count: count, emotes: emoteStr};
+}
+
+function hasOperator(name, rarity, owned) {
+	for (let i = 0; i < operators[rarity].size; i++) {
+		if (operators[rarity].ops[i].name === name && owned === (owned | 2**i)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function capitalize(str) {
+	return str.charAt(0).toUpperCase() + str.slice(1);
 }
