@@ -163,8 +163,6 @@ function gachaInventory(interaction, userData) {
 		userData.favoriteOp = {name: '', rarity: ''};
 	}
 
-	console.log(userData.favoriteOp.name);
-
 	const uniqueThreeStars = getUniqueOperators(userData, '3*');
 	const uniqueFourStars = getUniqueOperators(userData, '4*');
 	const uniqueFiveStars = getUniqueOperators(userData, '5*');
@@ -216,36 +214,24 @@ function gachaFavorite(interaction, userData) {
 	operator = capitalize(operator);
 	operator.split(' ').map(capitalize).join(' ');
 
-	console.log(operator);
+	const rarities = ['3*', '4*', '5*', '6*', 'Limited'];
 
-	if (hasOperator(operator, '3*', userData.inventory['3* Owned'])) {
-		userData.favoriteOp = {name: operator, rarity: '3*'};
+	for (let i = 0; i < rarities.length; i++) {
+		for (let j = 0; j < operators[rarities[i]].size; j++) {
+			if (operators[rarities[i]].ops[j].name === operator) {
+				if (userData.inventory[`${rarities[i]} Owned`] === (userData.inventory[`${rarities[i]} Owned`] | 2**j)) {
+					userData.favoriteOp = {name: operator, rarity: rarities[i]};
 	
-		return `${operator} is now your favorite operator.`;
-	}
-	else if (hasOperator(operator, '4*', userData.inventory['4* Owned'])) {
-		userData.favoriteOp = {name: operator, rarity: '4*'};
-	
-		return `${operator} is now your favorite operator.`;
-	}
-	else if (hasOperator(operator, '5*', userData.inventory['5* Owned'])) {
-		userData.favoriteOp = {name: operator, rarity: '5*'};
-	
-		return `${operator} is now your favorite operator.`;
-	}
-	else if (hasOperator(operator, '6*', userData.inventory['6* Owned'])) {
-		userData.favoriteOp = {name: operator, rarity: '6*'};
-	
-		return `${operator} is now your favorite operator.`;
-	}
-	else if (hasOperator(operator, 'Limited', userData.inventory['Limited Owned'])) {
-		userData.favoriteOp = {name: operator, rarity: 'Limited'};
-	
-		return `${operator} is now your favorite operator.`;
+					return `${operator} is now your favorite operator`;
+				}
+				else {
+					return `You do not own ${operator}`;
+				}
+			}
+		}
 	}
 	
-	
-	return 'Operator not found or not owned';
+	return 'Not a valid operator name';
 }
 
 function getUniqueOperators(userData, rarity) {
@@ -261,16 +247,6 @@ function getUniqueOperators(userData, rarity) {
 	}
 
 	return {count: count, emotes: emoteStr};
-}
-
-function hasOperator(name, rarity, owned) {
-	for (let i = 0; i < operators[rarity].size; i++) {
-		if (operators[rarity].ops[i].name === name && owned === (owned | 2**i)) {
-			return true;
-		}
-	}
-
-	return false;
 }
 
 function capitalize(str) {
