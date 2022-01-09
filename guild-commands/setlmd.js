@@ -1,8 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed } = require('discord.js');
 const Database = require("@replit/database");
 const db = new Database();
-const operators = require('../res/gacha/operators.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()

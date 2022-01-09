@@ -1,7 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
-const Database = require("@replit/database");
-const db = new Database();
+const getUserData = require('../helper-functions/get_user_data');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -12,29 +11,17 @@ module.exports = {
 				.setDescription('user profile to check')
 		),
 	async execute(interaction) {
-		let user = interaction.options.getUser('user');
+		const user = interaction.options.getUser('user');
 		if (!user) {
 			user = interaction.user;
 		}
+		
 		if (user.bot) {
 			await interaction.reply({content: 'User is a bot', ephemeral: true});
 			return;
 		}
 		
-		let userData = {};
-		if (await db.get(user.id)) {
-			userData = await db.get(user.id);
-		}
-
-		if (!userData.mikuTime) {
-			userData.mikuTime = 0;
-		}
-		if (!userData.lmd) {
-			userData.lmd = 0;
-		}
-		if (!userData.karma) {
-			userData.karma = 0;
-		}
+		let userData = getUserData(user.id);
 
 		const profileEmbed = new MessageEmbed()
 			.setColor('#86CECB')

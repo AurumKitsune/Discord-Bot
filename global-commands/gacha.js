@@ -2,8 +2,8 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
 const Database = require("@replit/database");
 const db = new Database();
+const getUserData = require('../helper-functions/get_user_data');
 const operators = require('../res/gacha/operators.json');
-const e = require('express');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -11,7 +11,7 @@ module.exports = {
 		.setDescription('Gacha command')
 		.addSubcommand(subcommand =>
 			subcommand.setName('pull')
-				.setDescription('Spend \u20A45 for a gacha pull')
+				.setDescription('Spend \u20A410 for a gacha pull')
 		)
 		.addSubcommand(subcommand =>
 			subcommand.setName('sell')
@@ -45,27 +45,9 @@ module.exports = {
 	async execute(interaction) {
 		await interaction.deferReply();
 
-		let userData = {};
-		if (await db.get(interaction.user.id)) {
-			userData = await db.get(interaction.user.id);
-		}
-		if (!userData.inventory) {
-			userData.inventory = {
-				'3* Count': 0,
-				'4* Count': 0,
-				'5* Count': 0,
-				'6* Count': 0,
-				'Limited Count': 0,
-				'3* Owned': 0,
-				'4* Owned': 0,
-				'5* Owned': 0,
-				'6* Owned': 0,
-				'Limited Owned': 0
-			};
-		}
+		let userData = await getUserData(interaction.user.id);
 		
 		let response = 'error';
-
 		if (interaction.options.getSubcommand() === 'pull') {
 			response = gachaPull(userData);
 			await db.set(interaction.user.id, userData);
