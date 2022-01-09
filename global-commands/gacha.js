@@ -207,14 +207,14 @@ function gachaInventory(interaction, userData) {
 }
 
 function gachaFavorite(interaction, userData) {
+	const rarities = ['3*', '4*', '5*', '6*', 'Limited'];
+
 	let operator = interaction.options.getString('operator');
 
 	// Captialize first letter of each word
 	operator.toLowerCase();
 	operator = capitalize(operator);
 	operator.split(' ').map(capitalize).join(' ');
-
-	const rarities = ['3*', '4*', '5*', '6*', 'Limited'];
 
 	for (let i = 0; i < rarities.length; i++) {
 		for (let j = 0; j < operators[rarities[i]].size; j++) {

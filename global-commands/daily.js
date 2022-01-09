@@ -7,11 +7,11 @@ module.exports = {
 		.setName('daily')
 		.setDescription('Gives daily \u20A450'),
 	async execute(interaction) {
-		await interaction.deferReply();
+		const dbData = await db.get(interaction.user.id);
 
 		let userData = {};
-		if (await db.get(interaction.user.id)) {
-			userData = await db.get(interaction.user.id);
+		if (dbData) {
+			userData = dbData;
 		}
 
 		if (!userData.lmd) {
@@ -22,7 +22,7 @@ module.exports = {
 		}
 
 		if (Math.floor(Date.now() / 1000) - userData.lastDaily < 72000) {
-			await interaction.editReply(`You can use again <t:${userData.lastDaily + 72000}:R>`);
+			await interaction.reply(`You can use again <t:${userData.lastDaily + 72000}:R>`);
 		}
 		else {
 			userData.lmd += 50;
@@ -30,7 +30,7 @@ module.exports = {
 
 			await db.set(interaction.user.id, userData);
 
-			await interaction.editReply(`You obtained \u20A450, you now have: \u20A4${userData.lmd}`);
+			await interaction.reply(`You obtained \u20A450, you now have: \u20A4${userData.lmd}`);
 		}
 	}
 };
