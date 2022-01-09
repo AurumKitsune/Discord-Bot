@@ -1,4 +1,6 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
+const Database = require("@replit/database");
+const db = new Database();
 const getUserData = require('../helper-functions/get_user_data');
 
 module.exports = {

@@ -26,7 +26,7 @@
 		]
 	},
 	"5*": {
-		"size": 9,
+		"size": 11,
 		"ops": [
 			{"name": "Amiya", "emote": "924584588381151302"},
 			{"name": "Blue Poison", "emote": "924584589064806400"},
@@ -36,11 +36,13 @@
 			{"name": "Ptilopsis", "emote": "924584590641877022"},
 			{"name": "Specter", "emote": "924584590201487370"},
 			{"name": "Texas", "emote": "924584589601689640"},
-			{"name": "Warfarin", "emote": "924584590654472222"}
+			{"name": "Warfarin", "emote": "924584590654472222"},
+			{"name": "Iris", "emote": "929837182313693186"},
+			{"name": "La Pluma", "emote": "929837182888316948"}
 		]
 	},
 	"4*": {
-		"size": 9,
+		"size": 16,
 		"ops": [
 			{"name": "Beanstalk", "emote": "924584516163600454"},
 			{"name": "Gravel", "emote": "924584516155232286"},
@@ -50,7 +52,14 @@
 			{"name": "Perfumer", "emote": "924584516486586449"},
 			{"name": "Pinecone", "emote": "924584516591443968"},
 			{"name": "Sussuro", "emote": "924584516381708348"},
-			{"name": "Vigna", "emote": "924584516515934228"}
+			{"name": "Vigna", "emote": "924584516515934228"},
+			{"name": "Click", "emote": "929837087396626472"},
+			{"name": "Conviction", "emote": "929837087212048415"},
+			{"name": "Frostleaf", "emote": "929837087375650826"},
+			{"name": "Gavial", "emote": "929837087572766720"},
+			{"name": "Meteor", "emote": "929837087006552104"},
+			{"name": "Mousse", "emote": "929837087207882792"},
+			{"name": "Podenco", "emote": "929837087518253067"}
 		]
 	},
 	"3*": {

@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Database = require("@replit/database");
 const db = new Database();
+const getUserData = require('../helper-functions/get_user_data');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -12,14 +13,7 @@ module.exports = {
 				.setRequired(true)
 		),
 	async execute(interaction) {
-		let userData = {};
-		if (await db.get(interaction.user.id)) {
-			userData = await db.get(interaction.user.id);
-		}
-
-		if (!userData.lmd) {
-			userData.lmd = 0;
-		}
+		let userData = getUserData(interaction.user.id);
 
 		const amount = interaction.options.getInteger('lmd');
 

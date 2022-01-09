@@ -77,6 +77,7 @@ function gachaPull(userData) {
 
 	let rarity = 'error';
 	let op = 'error';
+	let conviciton = false;
 	const rng = Math.floor(Math.random() * 100000);
 
 	if (60000 <= rng && rng < 100000) {
@@ -95,8 +96,18 @@ function gachaPull(userData) {
 		rarity = 'Limited';
 	}
 	
-	const opNum = Math.floor(Math.random() * operators[rarity].size);
+	let opNum = Math.floor(Math.random() * operators[rarity].size);
 	op = operators[rarity].ops[opNum].name;
+
+	if (op === 'Conviction') {
+		conviciton = true;
+		opNum = Math.floor(Math.random() * operators[rarity].size);
+		op = operators[rarity].ops[opNum].name;
+		if (op === 'Conviction') {
+			conviciton = false;
+		}
+	}
+
 	userData.inventory[`${rarity} Owned`] = userData.inventory[`${rarity} Owned`] | 2 ** opNum;
 
 	userData.lmd -= pullCost;
@@ -104,7 +115,7 @@ function gachaPull(userData) {
 
 	const gachaEmbed = new MessageEmbed()
 		.setColor('#86CECB')
-		.setTitle(`You pulled ${op} (${rarity})`)
+		.setTitle(`You pulled ${conviciton ? '~~Convic...~~ ' : ''} ${op} (${rarity})`)
 		.setImage(`attachment://${op.replace(/\s/g, '_')}.png`)
 		.setFooter(`You paid \u20A4${pullCost} for pulling.`);
 
