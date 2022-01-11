@@ -71,40 +71,44 @@ module.exports = {
 function gachaPull(userData) {
 	const pullCost = 10;
 
-	if (!userData.lmd || userData.lmd < pullCost) {
+	if (!userData.hasOwnProperty('lmd') || userData.lmd < pullCost) {
 		return 'Not enough LMD';
 	}
 
 	let rarity = 'error';
+	let color = '#66AEAB';
 	let op = 'error';
-	let conviciton = false;
 	const rng = Math.floor(Math.random() * 100000);
 
 	if (60000 <= rng && rng < 100000) {
 		rarity = '3*';
+		color = '#CCCCCC';
 	}
 	else if (5000 <= rng && rng < 60000) {
 		rarity = '4*';
+		color = '#0066AA';
 	}
 	else if (500 <= rng && rng < 5000) {
 		rarity = '5*';
+		color = '#FFAA00';
 	}
 	else if (5 <= rng && rng < 500) {
 		rarity = '6*';
+		color = '#FF6600';
 	}
 	else if (0 <= rng && rng < 5) {
 		rarity = 'Limited';
+		color = '#DD5500';
 	}
 	
 	let opNum = Math.floor(Math.random() * operators[rarity].size);
 	op = operators[rarity].ops[opNum].name;
 
 	if (op === 'Conviction') {
-		conviciton = true;
 		opNum = Math.floor(Math.random() * operators[rarity].size);
 		op = operators[rarity].ops[opNum].name;
-		if (op === 'Conviction') {
-			conviciton = false;
+		if (op !== 'Conviction') {
+			color = '#005599';
 		}
 	}
 
@@ -114,12 +118,12 @@ function gachaPull(userData) {
 	userData.inventory[`${rarity} Count`]++;
 
 	const gachaEmbed = new MessageEmbed()
-		.setColor('#86CECB')
-		.setTitle(`You pulled ${conviciton ? '~~Convic...~~ ' : ''} ${op} (${rarity})`)
-		.setImage(`attachment://${op.replace(/\s/g, '_')}.png`)
+		.setColor(`${color}`)
+		.setTitle(`You pulled ${op} (${rarity})`)
+		.setImage(`attachment://${operators[rarity].ops[opNum].image.replace('https://i.imgur.com/', '')}`)
 		.setFooter(`You paid \u20A4${pullCost} for pulling.`);
 
-	return {embeds: [gachaEmbed], files: [`./res/gacha/${rarity}/${op}.png`]};
+	return {embeds: [gachaEmbed], files: [`${operators[rarity].ops[opNum].image}`]};
 }
 
 function gachaSell(interaction, userData) {
