@@ -11,7 +11,7 @@ module.exports = {
 				.setDescription('user profile to check')
 		),
 	async execute(interaction) {
-		const user = interaction.options.getUser('user');
+		let user = interaction.options.getUser('user');
 		if (!user) {
 			user = interaction.user;
 		}
@@ -21,7 +21,7 @@ module.exports = {
 			return;
 		}
 		
-		let userData = getUserData(user.id);
+		let userData = await getUserData(user.id);
 
 		const profileEmbed = new MessageEmbed()
 			.setColor('#86CECB')
