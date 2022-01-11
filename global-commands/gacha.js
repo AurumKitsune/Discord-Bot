@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js');
 const Database = require("@replit/database");
 const db = new Database();
 const getUserData = require('../helper-functions/get_user_data');
-const operators = require('../res/gacha/operators.json');
+const operators = require('../res/operators.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -157,7 +157,7 @@ function gachaSell(interaction, userData) {
 
 function gachaInventory(interaction, userData) {
 	if (!userData.favoriteOp) {
-		userData.favoriteOp = {name: '', rarity: ''};
+		userData.favoriteOp = {name: '', image: ''};
 	}
 
 	const uniqueThreeStars = getUniqueOperators(userData, '3*');
@@ -192,11 +192,11 @@ function gachaInventory(interaction, userData) {
 			}
 		);
 
-	if (userData.favoriteOp.name !== '') {
+	if (userData.favoriteOp.name !== '' && userData.favoriteOp.hasOwnProperty('image')) {
 		inventoryEmbed.setDescription(`Favorite Operator: ${userData.favoriteOp.name}`)
-			.setThumbnail(`attachment://${userData.favoriteOp.name}.png`);
+			.setThumbnail(`attachment://${userData.favoriteOp.image.replace('https://i.imgur.com/', '')}`);
 		
-		return {embeds: [inventoryEmbed], files: [`./res/gacha/${userData.favoriteOp.rarity}/${userData.favoriteOp.name}.png`]};
+		return {embeds: [inventoryEmbed], files: [`${userData.favoriteOp.image}`]};
 	}
 	else {
 		return {embeds: [inventoryEmbed]};
@@ -217,7 +217,7 @@ function gachaFavorite(interaction, userData) {
 		for (let j = 0; j < operators[rarities[i]].size; j++) {
 			if (operators[rarities[i]].ops[j].name === operator) {
 				if (userData.inventory[`${rarities[i]} Owned`] === (userData.inventory[`${rarities[i]} Owned`] | 2**j)) {
-					userData.favoriteOp = {name: operator, rarity: rarities[i]};
+					userData.favoriteOp = {name: operator, image: operators[rarities[i]].ops[j].image};
 	
 					return `${operator} is now your favorite operator`;
 				}
