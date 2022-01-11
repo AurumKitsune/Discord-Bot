@@ -13,7 +13,7 @@ module.exports = {
 				.setRequired(true)
 		),
 	async execute(interaction) {
-		let userData = getUserData(interaction.user.id);
+		let userData = await getUserData(interaction.user.id);
 
 		const amount = interaction.options.getInteger('lmd');
 
