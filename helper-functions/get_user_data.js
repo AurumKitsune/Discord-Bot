@@ -4,6 +4,10 @@ const db = new Database();
 const getUserData = async function(userId) {
 	let userData = await db.get(userId);
 
+  if (userData === null) {
+    userData = {};
+  } 
+
 	if (!userData.hasOwnProperty('lmd')) {
 		userData.lmd = 0;
 	}
