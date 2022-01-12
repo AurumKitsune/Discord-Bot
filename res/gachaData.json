@@ -1,7 +1,7 @@
 {
 	"Limited": {
-		"size": 5,
-		"ops": [
+		"count": 5,
+		"operators": [
 			{"name": "Ash", "emote": "924584762151161856", "image": "https://i.imgur.com/eUWZMZM.png"},
 			{"name": "Dusk", "emote": "924584762654466088", "image": "https://i.imgur.com/H2eHcFZ.png"},
 			{"name": "Rosmontis", "emote": "924594730375999538", "image": "https://i.imgur.com/WyeiuUg.png"},
@@ -10,8 +10,8 @@
 		]
 	},
 	"6*": {
-		"size": 11,
-		"ops": [
+		"count": 11,
+		"operators": [
 			{"name": "Archetto", "emote": "924584696044716062", "image": "https://i.imgur.com/suK58hp.png"},
 			{"name": "Bagpipe", "emote": "924584696145379348", "image": "https://i.imgur.com/MCHhg9m.png"},
 			{"name": "Blaze", "emote": "924584696397053962", "image": "https://i.imgur.com/sb8J3uT.png"},
@@ -26,8 +26,8 @@
 		]
 	},
 	"5*": {
-		"size": 11,
-		"ops": [
+		"count": 11,
+		"operators": [
 			{"name": "Amiya", "emote": "924584588381151302", "image": "https://i.imgur.com/OsT450g.png"},
 			{"name": "Blue Poison", "emote": "924584589064806400", "image": "https://i.imgur.com/8flekxC.png"},
 			{"name": "Lappland", "emote": "924584589593309205", "image": "https://i.imgur.com/g4o4tkl.png"},
@@ -42,8 +42,8 @@
 		]
 	},
 	"4*": {
-		"size": 16,
-		"ops": [
+		"count": 16,
+		"operators": [
 			{"name": "Beanstalk", "emote": "924584516163600454", "image": "https://i.imgur.com/hXnPgkD.png"},
 			{"name": "Gravel", "emote": "924584516155232286", "image": "https://i.imgur.com/4iQqI46.png"},
 			{"name": "Gummy", "emote": "924584515794522152", "image": "https://i.imgur.com/7oSNlDV.png"},
@@ -63,8 +63,8 @@
 		]
 	},
 	"3*": {
-		"size": 5,
-		"ops": [
+		"count": 5,
+		"operators": [
 			{"name": "Ansel", "emote": "924584403840167957", "image": "https://i.imgur.com/uEUoqc2.png"},
 			{"name": "Fang", "emote": "924584404280561694", "image": "https://i.imgur.com/gXFQD0E.png"},
 			{"name": "Kroos", "emote": "924584404083437639", "image": "https://i.imgur.com/KuAl1lG.png"},

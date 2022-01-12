@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js');
 const Database = require("@replit/database");
 const db = new Database();
 const getUserData = require('../helper-functions/get_user_data');
-const operators = require('../res/operators.json');
+const gachaData = require('../res/gachaData.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -12,6 +12,15 @@ module.exports = {
 		.addSubcommand(subcommand =>
 			subcommand.setName('pull')
 				.setDescription('Spend \u20A410 for a gacha pull')
+				.addIntegerOption(option => 
+					option.setName('count')
+						.setDescription('number of pulls to do')
+						.addChoices([
+							['1', 1],
+							['5', 5],
+							['10', 10]
+						])
+				)
 		)
 		.addSubcommand(subcommand =>
 			subcommand.setName('sell')
@@ -49,7 +58,7 @@ module.exports = {
 		
 		let response = 'error';
 		if (interaction.options.getSubcommand() === 'pull') {
-			response = gachaPull(userData);
+			response = gachaPull(interaction, userData);
 			await db.set(interaction.user.id, userData);
 		}
 		else if (interaction.options.getSubcommand() === 'sell') {
@@ -68,62 +77,57 @@ module.exports = {
 	}
 };
 
-function gachaPull(userData) {
+function gachaPull(interaction, userData) {
 	const pullCost = 10;
 
-	if (!userData.hasOwnProperty('lmd') || userData.lmd < pullCost) {
+	let pullCount = interaction.options.getInteger('count');
+	if (!pullCount) {
+		pullCount = 1;
+	}
+
+	if (!userData.hasOwnProperty('lmd') || userData.lmd < pullCost * pullCount) {
 		return 'Not enough LMD';
 	}
 
-	let rarity = 'error';
-	let color = '#66AEAB';
-	let op = 'error';
-	const rng = Math.floor(Math.random() * 100000);
+	let operatorData = [];
+	let highestRarity = {rarity: '3*', color: '#CCCCCC'};
+	const rarities = ['3*', '4*', '5*', '6*', 'Limited'];
+	for (let i = 0; i < pullCount; i++) {
+		operatorData[i] = getRandomOperator();
 
-	if (60000 <= rng && rng < 100000) {
-		rarity = '3*';
-		color = '#CCCCCC';
-	}
-	else if (5000 <= rng && rng < 60000) {
-		rarity = '4*';
-		color = '#0066AA';
-	}
-	else if (500 <= rng && rng < 5000) {
-		rarity = '5*';
-		color = '#FFAA00';
-	}
-	else if (5 <= rng && rng < 500) {
-		rarity = '6*';
-		color = '#FF6600';
-	}
-	else if (0 <= rng && rng < 5) {
-		rarity = 'Limited';
-		color = '#DD5500';
-	}
-	
-	let opNum = Math.floor(Math.random() * operators[rarity].size);
-	op = operators[rarity].ops[opNum].name;
+		userData.inventory[`${operatorData[i].rarity} Owned`] = userData.inventory[`${operatorData[i].rarity} Owned`] | 2 ** operatorData[i].index;
+		userData.inventory[`${operatorData[i].rarity} Count`]++;
 
-	if (op === 'Conviction') {
-		opNum = Math.floor(Math.random() * operators[rarity].size);
-		op = operators[rarity].ops[opNum].name;
-		if (op !== 'Conviction') {
-			color = '#005599';
+
+		if (rarities.indexOf(operatorData[i].rarity) > rarities.indexOf(highestRarity.rarity)) {
+			highestRarity.rarity = operatorData[i].rarity;
+			highestRarity.color = operatorData[i].color;
 		}
 	}
 
-	userData.inventory[`${rarity} Owned`] = userData.inventory[`${rarity} Owned`] | 2 ** opNum;
+	userData.lmd -= pullCost * pullCount;
 
-	userData.lmd -= pullCost;
-	userData.inventory[`${rarity} Count`]++;
+	if (pullCount === 1) {
+		const gachaEmbed = new MessageEmbed()
+			.setColor(`${operatorData[0].color}`)
+			.setTitle(`You pulled ${operatorData[0].name} (${operatorData[0].rarity})`)
+			.setImage(`attachment://${gachaData[operatorData[0].rarity].operators[operatorData[0].index].image.replace('https://i.imgur.com/', '')}`)
+			.setFooter(`You paid \u20A4${pullCost * pullCount} for pulling.`);
 
-	const gachaEmbed = new MessageEmbed()
-		.setColor(`${color}`)
-		.setTitle(`You pulled ${op} (${rarity})`)
-		.setImage(`attachment://${operators[rarity].ops[opNum].image.replace('https://i.imgur.com/', '')}`)
-		.setFooter(`You paid \u20A4${pullCost} for pulling.`);
+		return {embeds: [gachaEmbed], files: [`${gachaData[operatorData[0].rarity].operators[operatorData[0].index].image}`]};
+	}
+	else {
+		const gachaEmbed = new MessageEmbed()
+			.setColor(`${highestRarity.color}`)
+			.setTitle('You pulled:')
+			.setFooter(`You paid \u20A4${pullCost * pullCount} for pulling.`);
 
-	return {embeds: [gachaEmbed], files: [`${operators[rarity].ops[opNum].image}`]};
+		for (let i = 0; i < pullCount; i++) {
+			gachaEmbed.addField(`${operatorData[i].name}`, getOperatorEmote(operatorData[i].rarity, operatorData[i].index));
+		}
+
+		return {embeds: [gachaEmbed]};
+	}
 }
 
 function gachaSell(interaction, userData) {
@@ -171,23 +175,23 @@ function gachaInventory(interaction, userData) {
 		.setTitle(`${interaction.user.username}'s Inventory`)
 		.addFields(
 			{
-				name: `3* Count: ${userData.inventory['3* Count']}\nUnique operators: ${uniqueThreeStars.count}/${operators['3*'].size}`,
+				name: `3* Count: ${userData.inventory['3* Count']}\nUnique operators: ${uniqueThreeStars.count}/${gachaData['3*'].count}`,
 				value: `${uniqueThreeStars.emotes}\n\u200B`
 			},
 			{
-				name: `4* Count: ${userData.inventory['4* Count']}\nUnique operators: ${uniqueFourStars.count}/${operators['4*'].size}`,
+				name: `4* Count: ${userData.inventory['4* Count']}\nUnique operators: ${uniqueFourStars.count}/${gachaData['4*'].count}`,
 				value: `${uniqueFourStars.emotes}\n\u200B`
 			},
 			{
-				name: `5* Count: ${userData.inventory['5* Count']}\nUnique operators: ${uniqueFiveStars.count}/${operators['5*'].size}`,
+				name: `5* Count: ${userData.inventory['5* Count']}\nUnique operators: ${uniqueFiveStars.count}/${gachaData['5*'].count}`,
 				value: `${uniqueFiveStars.emotes}\n\u200B`
 			},
 			{
-				name: `6* Count: ${userData.inventory['6* Count']}\nUnique operators: ${uniqueSixStars.count}/${operators['6*'].size}`,
+				name: `6* Count: ${userData.inventory['6* Count']}\nUnique operators: ${uniqueSixStars.count}/${gachaData['6*'].count}`,
 				value: `${uniqueSixStars.emotes}\n\u200B`
 			},
 			{
-				name: `Limited Count: ${userData.inventory['Limited Count']}\nUnique operators: ${uniqueLimiteds.count}/${operators['Limited'].size}`,
+				name: `Limited Count: ${userData.inventory['Limited Count']}\nUnique operators: ${uniqueLimiteds.count}/${gachaData['Limited'].count}`,
 				value: `${uniqueLimiteds.emotes}\n\u200B`
 			}
 		);
@@ -214,10 +218,10 @@ function gachaFavorite(interaction, userData) {
 	operator.split(' ').map(capitalize).join(' ');
 
 	for (let i = 0; i < rarities.length; i++) {
-		for (let j = 0; j < operators[rarities[i]].size; j++) {
-			if (operators[rarities[i]].ops[j].name === operator) {
+		for (let j = 0; j < gachaData[rarities[i]].count; j++) {
+			if (gachaData[rarities[i]].operators[j].name === operator) {
 				if (userData.inventory[`${rarities[i]} Owned`] === (userData.inventory[`${rarities[i]} Owned`] | 2**j)) {
-					userData.favoriteOp = {name: operator, image: operators[rarities[i]].ops[j].image};
+					userData.favoriteOp = {name: operator, image: gachaData[rarities[i]].operators[j].image};
 	
 					return `${operator} is now your favorite operator`;
 				}
@@ -231,19 +235,71 @@ function gachaFavorite(interaction, userData) {
 	return 'Not a valid operator name';
 }
 
+function getRandomOperator() {
+	let name = 'error';
+	let index = 0;
+	let rarity = 'error';
+	let color = '#000000';
+
+	const rng = Math.floor(Math.random() * 100000);
+
+	if (60000 <= rng && rng < 100000) {
+		rarity = '3*';
+		color = '#CCCCCC';
+	}
+	else if (5000 <= rng && rng < 60000) {
+		rarity = '4*';
+		color = '#0066AA';
+	}
+	else if (500 <= rng && rng < 5000) {
+		rarity = '5*';
+		color = '#FFAA00';
+	}
+	else if (5 <= rng && rng < 500) {
+		rarity = '6*';
+		color = '#FF6600';
+	}
+	else if (0 <= rng && rng < 5) {
+		rarity = 'Limited';
+		color = '#DD5500';
+	}
+	
+	index = Math.floor(Math.random() * gachaData[rarity].count)
+	name = gachaData[rarity].operators[index].name;
+
+	if (name === 'Conviction') {
+		index = Math.floor(Math.random() * gachaData[rarity].count);
+		name = gachaData[rarity].operators[index].name;
+		if (name !== 'Conviction') {
+			color = '#004488';
+		}
+	}
+
+	return {
+		name: name,
+		index: index,
+		rarity: rarity,
+		color: color
+	};
+}
+
 function getUniqueOperators(userData, rarity) {
 	let emoteStr = '\u200B';
 	let count = 0;
 
-	for (let i = operators[rarity].size - 1; i >= 0; i--) {
+	for (let i = gachaData[rarity].count - 1; i >= 0; i--) {
 		if (userData.inventory[`${rarity} Owned`] >= 2**i) {
-			emoteStr += `<:${operators[rarity].ops[i].name.replace(/\s/g, '_')}:${operators[rarity].ops[i].emote}>`;
+			emoteStr += getOperatorEmote(rarity, i);
 			count++;
 			userData.inventory[`${rarity} Owned`] -= 2**i;
 		}
 	}
 
 	return {count: count, emotes: emoteStr};
+}
+
+function getOperatorEmote(rarity, index) {
+	return `<:${gachaData[rarity].operators[index].name.replace(/\s/g, '_')}:${gachaData[rarity].operators[index].emote}>`;
 }
 
 function capitalize(str) {
