@@ -22,11 +22,6 @@ const getUserData = async function(userId) {
 	}
 	if (!userData.hasOwnProperty('inventory')) {
 		userData.inventory = {
-			'3* Count': 0,
-			'4* Count': 0,
-			'5* Count': 0,
-			'6* Count': 0,
-			'Limited Count': 0,
 			'3* Owned': 0,
 			'4* Owned': 0,
 			'5* Owned': 0,
@@ -34,8 +29,6 @@ const getUserData = async function(userId) {
 			'Limited Owned': 0
 		};
 	}
-
-	console.log(userData);
 
 	return userData;
 }

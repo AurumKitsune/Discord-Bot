@@ -1,12 +1,13 @@
 {
 	"Limited": {
-		"count": 5,
+		"count": 6,
 		"operators": [
 			{"name": "Ash", "emote": "924584762151161856", "image": "https://i.imgur.com/eUWZMZM.png"},
 			{"name": "Dusk", "emote": "924584762654466088", "image": "https://i.imgur.com/H2eHcFZ.png"},
 			{"name": "Rosmontis", "emote": "924594730375999538", "image": "https://i.imgur.com/WyeiuUg.png"},
 			{"name": "Skalter", "emote": "924584762830639114", "image": "https://i.imgur.com/40ebx4x.png"},
-			{"name": "W", "emote": "924584761865961473", "image": "https://i.imgur.com/Y6A7BXF.png"}
+			{"name": "W", "emote": "924584761865961473", "image": "https://i.imgur.com/Y6A7BXF.png"},
+			{"name": "Chalter", "emote": "931451188124213258", "image": "https://i.imgur.com/OZ7Y2A4.png"}
 		]
 	},
 	"6*": {

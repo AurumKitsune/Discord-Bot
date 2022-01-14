@@ -25,18 +25,6 @@ module.exports = {
 		.addSubcommand(subcommand =>
 			subcommand.setName('sell')
 				.setDescription('Sell your operators by rarity')
-				.addStringOption(option =>
-					option.setName('rarity')
-						.setDescription('rarity you want to sell')
-						.setRequired(true)
-						.addChoices([
-							['3*', '3*'],
-							['4*', '4*'],
-							['5*', '5*'],
-							['6*', '6*'],
-							['Limited', 'Limited']
-						])
-				)
 		)
 		.addSubcommand(subcommand =>
 			subcommand.setName('inventory')
@@ -90,37 +78,39 @@ function gachaPull(interaction, userData) {
 	}
 
 	let operatorData = [];
-	let highestRarity = {rarity: '3*', color: '#CCCCCC'};
+	let refund = 0;
+	let highestRarity = '3*';
 	const rarities = ['3*', '4*', '5*', '6*', 'Limited'];
 	for (let i = 0; i < pullCount; i++) {
 		operatorData[i] = getRandomOperator();
 
-		userData.inventory[`${operatorData[i].rarity} Owned`] = userData.inventory[`${operatorData[i].rarity} Owned`] | 2 ** operatorData[i].index;
-		userData.inventory[`${operatorData[i].rarity} Count`]++;
+		if (userData.inventory[`${operatorData[i].rarity} Owned`] === userData.inventory[`${operatorData[i].rarity} Owned`] | 2 ** operatorData[i].index) {
+			refund += getSellPrice(operatorData[i].rarity);
+		}
+		else {
+			userData.inventory[`${operatorData[i].rarity} Owned`] = userData.inventory[`${operatorData[i].rarity} Owned`] | 2 ** operatorData[i].index;
+		}
 
-
-		if (rarities.indexOf(operatorData[i].rarity) > rarities.indexOf(highestRarity.rarity)) {
-			highestRarity.rarity = operatorData[i].rarity;
-			highestRarity.color = operatorData[i].color;
+		if (rarities.indexOf(operatorData[i].rarity) > rarities.indexOf(highestRarity)) {
+			highestRarity = operatorData[i].rarity;
 		}
 	}
 
 	userData.lmd -= pullCost * pullCount;
+	userData.lmd += refund;
+
+	const gachaEmbed = new MessageEmbed()
+		.setColor(getRarityColor(highestRarity))
+		.setFooter(`You paid \u20A4${pullCost * pullCount} for pulling.${refund !== 0 ? ` Refunded \u20A4${refund} for dupes` : ''}`);
 
 	if (pullCount === 1) {
-		const gachaEmbed = new MessageEmbed()
-			.setColor(`${operatorData[0].color}`)
-			.setTitle(`You pulled ${operatorData[0].name} (${operatorData[0].rarity})`)
-			.setImage(`attachment://${gachaData[operatorData[0].rarity].operators[operatorData[0].index].image.replace('https://i.imgur.com/', '')}`)
-			.setFooter(`You paid \u20A4${pullCost * pullCount} for pulling.`);
+		gachaEmbed.setTitle(`You pulled ${operatorData[0].name} (${operatorData[0].rarity})`)
+			.setImage(`attachment://${gachaData[operatorData[0].rarity].operators[operatorData[0].index].image.replace('https://i.imgur.com/', '')}`);
 
 		return {embeds: [gachaEmbed], files: [`${gachaData[operatorData[0].rarity].operators[operatorData[0].index].image}`]};
 	}
 	else {
-		const gachaEmbed = new MessageEmbed()
-			.setColor(`${highestRarity.color}`)
-			.setTitle('You pulled:')
-			.setFooter(`You paid \u20A4${pullCost * pullCount} for pulling.`);
+		gachaEmbed.setTitle('You pulled:');
 
 		for (let i = 0; i < pullCount; i++) {
 			gachaEmbed.addField(`${operatorData[i].name}`, getOperatorEmote(operatorData[i].rarity, operatorData[i].index));
@@ -131,35 +121,44 @@ function gachaPull(interaction, userData) {
 }
 
 function gachaSell(interaction, userData) {
-	const rarity = interaction.options.getString('rarity');
+	const rarities = ['3*', '4*', '5*', '6*', 'Limited'];
 
-	const amount = userData.inventory[`${rarity} Count`];
+	let totalAmount = 0;
+	let totalSellPrice = 0;
 
-	if (amount == 0) {
-		return `You do not have any ${rarity} operators`;
+	for (let i = 0; i < rarities.length; i++) {
+		let amount = userData.inventory[`${rarities[i]} Count`];
+		if (!amount) {
+			amount = 0;
+		}
+
+		let sellPrice = 1;
+		if (rarities[i] === '4*') {
+			sellPrice = 3;
+		}
+		else if (rarities[i] === '5*') {
+			sellPrice = 40;
+		}
+		else if (rarities[i] === '6*') {
+			sellPrice = 450;
+		}
+		else if (rarities[i] === 'Limited') {
+			sellPrice = 50000;
+		}
+
+		totalAmount += amount;
+		totalSellPrice += amount * sellPrice;
+		delete userData.inventory[`${rarities[i]} Count`];
 	}
 
-	let sellPrice = 1;
-	if (rarity === '4*') {
-		sellPrice = 3;
-	}
-	else if (rarity === '5*') {
-		sellPrice = 40;
-	}
-	else if (rarity === '6*') {
-		sellPrice = 450;
-	}
-	else if (rarity === 'Limited') {
-		sellPrice = 50000;
-	}
+	userData.lmd += totalSellPrice;
 
-	userData.lmd += amount * sellPrice;
-	userData.inventory[`${rarity} Count`] = 0;
-
-	return `Sold ${amount} **${rarity}** operator${amount === 1 ? '' : 's'} for \u20A4${amount * sellPrice}`;
+	return `Sold ${totalAmount} operator${totalAmount === 1 ? '' : 's'} for \u20A4${totalSellPrice}`;
 }
 
 function gachaInventory(interaction, userData) {
+	console.log(userData.inventory);
+
 	if (!userData.favoriteOp) {
 		userData.favoriteOp = {name: '', image: ''};
 	}
@@ -175,23 +174,23 @@ function gachaInventory(interaction, userData) {
 		.setTitle(`${interaction.user.username}'s Inventory`)
 		.addFields(
 			{
-				name: `3* Count: ${userData.inventory['3* Count']}\nUnique operators: ${uniqueThreeStars.count}/${gachaData['3*'].count}`,
+				name: `${userData.inventory['3* Count'] ? `3* Count: ${userData.inventory['3* Count']}` : ''}\nUnique operators: ${uniqueThreeStars.count}/${gachaData['3*'].count}`,
 				value: `${uniqueThreeStars.emotes}\n\u200B`
 			},
 			{
-				name: `4* Count: ${userData.inventory['4* Count']}\nUnique operators: ${uniqueFourStars.count}/${gachaData['4*'].count}`,
+				name: `${userData.inventory['4* Count'] ? `4* Count: ${userData.inventory['4* Count']}` : ''}\nUnique operators: ${uniqueFourStars.count}/${gachaData['4*'].count}`,
 				value: `${uniqueFourStars.emotes}\n\u200B`
 			},
 			{
-				name: `5* Count: ${userData.inventory['5* Count']}\nUnique operators: ${uniqueFiveStars.count}/${gachaData['5*'].count}`,
+				name: `${userData.inventory['5* Count'] ? `5* Count: ${userData.inventory['5* Count']}` : ''}\nUnique operators: ${uniqueFiveStars.count}/${gachaData['5*'].count}`,
 				value: `${uniqueFiveStars.emotes}\n\u200B`
 			},
 			{
-				name: `6* Count: ${userData.inventory['6* Count']}\nUnique operators: ${uniqueSixStars.count}/${gachaData['6*'].count}`,
+				name: `${userData.inventory['6* Count'] ? `6* Count: ${userData.inventory['6* Count']}` : ''}\nUnique operators: ${uniqueSixStars.count}/${gachaData['6*'].count}`,
 				value: `${uniqueSixStars.emotes}\n\u200B`
 			},
 			{
-				name: `Limited Count: ${userData.inventory['Limited Count']}\nUnique operators: ${uniqueLimiteds.count}/${gachaData['Limited'].count}`,
+				name: `${userData.inventory['Limited Count'] ? `Limited Count: ${userData.inventory['Limited Count']}` : ''}\nUnique operators: ${uniqueLimiteds.count}/${gachaData['Limited'].count}`,
 				value: `${uniqueLimiteds.emotes}\n\u200B`
 			}
 		);
@@ -213,9 +212,7 @@ function gachaFavorite(interaction, userData) {
 	let operator = interaction.options.getString('operator');
 
 	// Captialize first letter of each word
-	operator.toLowerCase();
-	operator = capitalize(operator);
-	operator.split(' ').map(capitalize).join(' ');
+	operator = operator.toLowerCase().replace(/\b\w/g, str => str.toUpperCase());
 
 	for (let i = 0; i < rarities.length; i++) {
 		for (let j = 0; j < gachaData[rarities[i]].count; j++) {
@@ -239,29 +236,23 @@ function getRandomOperator() {
 	let name = 'error';
 	let index = 0;
 	let rarity = 'error';
-	let color = '#000000';
 
 	const rng = Math.floor(Math.random() * 100000);
 
 	if (60000 <= rng && rng < 100000) {
 		rarity = '3*';
-		color = '#CCCCCC';
 	}
 	else if (5000 <= rng && rng < 60000) {
 		rarity = '4*';
-		color = '#0066AA';
 	}
 	else if (500 <= rng && rng < 5000) {
 		rarity = '5*';
-		color = '#FFAA00';
 	}
 	else if (5 <= rng && rng < 500) {
 		rarity = '6*';
-		color = '#FF6600';
 	}
 	else if (0 <= rng && rng < 5) {
 		rarity = 'Limited';
-		color = '#DD5500';
 	}
 	
 	index = Math.floor(Math.random() * gachaData[rarity].count)
@@ -270,17 +261,54 @@ function getRandomOperator() {
 	if (name === 'Conviction') {
 		index = Math.floor(Math.random() * gachaData[rarity].count);
 		name = gachaData[rarity].operators[index].name;
-		if (name !== 'Conviction') {
-			color = '#004488';
-		}
 	}
 
 	return {
 		name: name,
 		index: index,
-		rarity: rarity,
-		color: color
+		rarity: rarity
 	};
+}
+
+function getSellPrice(rarity) {
+	let sellPrice = 2;
+
+	if (rarity === '4*') {
+		sellPrice = 4;
+	}
+	else if (rarity === '5*') {
+		sellPrice = 50;
+	}
+	else if (rarity === '6*') {
+		sellPrice = 500;
+	}
+	else if (rarity === 'Limited') {
+		sellPrice = 50000;
+	}
+
+	return sellPrice;
+}
+
+function getRarityColor(rarity) {
+	let color = '#000000';
+
+	if (rarity === '3*') {
+		color = '#CCCCCC';
+	}
+	else if (rarity === '4*') {
+		color = '#0066AA';
+	}
+	else if (rarity === '5*') {
+		color = '#FFAA00';
+	}
+	else if (rarity === '6*') {
+		color = '#FF6600';
+	}
+	else if (rarity === 'Limited') {
+		color = '#DD5500';
+	}
+
+	return color;
 }
 
 function getUniqueOperators(userData, rarity) {
@@ -300,8 +328,4 @@ function getUniqueOperators(userData, rarity) {
 
 function getOperatorEmote(rarity, index) {
 	return `<:${gachaData[rarity].operators[index].name.replace(/\s/g, '_')}:${gachaData[rarity].operators[index].emote}>`;
-}
-
-function capitalize(str) {
-	return str.charAt(0).toUpperCase() + str.slice(1);
 }
