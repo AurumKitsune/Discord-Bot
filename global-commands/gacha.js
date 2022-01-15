@@ -84,11 +84,11 @@ function gachaPull(interaction, userData) {
 	for (let i = 0; i < pullCount; i++) {
 		operatorData[i] = getRandomOperator();
 
-		if (userData.inventory[`${operatorData[i].rarity} Owned`] === userData.inventory[`${operatorData[i].rarity} Owned`] | 2 ** operatorData[i].index) {
+		if (userData.inventory[`${operatorData[i].rarity} Owned`] === (userData.inventory[`${operatorData[i].rarity} Owned`] | 2 ** operatorData[i].index)) {
 			refund += getSellPrice(operatorData[i].rarity);
 		}
 		else {
-			userData.inventory[`${operatorData[i].rarity} Owned`] = userData.inventory[`${operatorData[i].rarity} Owned`] | 2 ** operatorData[i].index;
+			userData.inventory[`${operatorData[i].rarity} Owned`] = (userData.inventory[`${operatorData[i].rarity} Owned`] | 2 ** operatorData[i].index);
 		}
 
 		if (rarities.indexOf(operatorData[i].rarity) > rarities.indexOf(highestRarity)) {
